@@ -60,6 +60,33 @@ local Commands = {
 		end
 	end,
 
+	unjail = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			local Jail = game.Workspace:FindFirstChild(Player.Name .. " Jail")
+			if Jail then
+				Jail:Destroy()
+			end
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				local Jail = game.Workspace:FindFirstChild(Play.Name .. " Jail")
+				if Jail then
+					Jail:Destroy()
+				end
+				break
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					local Jail = game.Workspace:FindFirstChild(player.Name .. " Jail")
+					if Jail then
+						Jail:Destroy()
+					end
+				end
+			end
+
+		end
+	end,
+
 	blind = function(Player, Target)
 		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
 			if not Player.PlayerGui:FindFirstChild("Blind") then
@@ -111,15 +138,31 @@ local Commands = {
 
 	noclip = function(Player, Target)
 		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
-			require(script.Parent.Start_Noclip):setCollidable(Player)
+			game.ReplicatedStorage.Events_.Noclip:FireClient(Player)
 		elseif Target == "all" then
 			for _, Play in pairs(game.Players:GetPlayers()) do
-				require(script.Parent.Start_Noclip):setCollidable(Play)
+				game.ReplicatedStorage.Events_.Noclip:FireClient(Play)
 			end
 		else
 			for _, player in pairs(game.Players:GetPlayers()) do
 				if Target == player.Name:sub(1,#Target):lower() then
-					require(script.Parent.Start_Noclip):setCollidable(player)
+					game.ReplicatedStorage.Events_.Noclip:FireClient(player)
+				end
+			end
+		end
+	end,
+
+	fly = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			game.ReplicatedStorage.Events_.Flight:FireClient(Player)
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				game.ReplicatedStorage.Events_.Flight:FireClient(Play)
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					game.ReplicatedStorage.Events_.Flight:FireClient(player)
 				end
 			end
 		end
@@ -181,6 +224,15 @@ local Commands = {
 		end
 	end,
 	
+	setgrav = function(Player, Target)
+		game.Workspace.Gravity = tonumber(Target)
+	end,
+	
+	require = function(Player, Target)
+		require(tonumber(Target) or Target)
+		print(Player.Name .. ' has required module: ' .. Target)
+	end,
+	
 	kick = function (Player, Target)
 		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
 			Player:Kick()
@@ -193,24 +245,285 @@ local Commands = {
 			end
 		end
 	end,
-	
+
 	health = function(Player, Target, Target2)
 		Target2 = tonumber(Target2)
 		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			if Target2 > Player.Character:WaitForChild("Humanoid").Health then
+				Player.Character:WaitForChild("Humanoid").MaxHealth = Target2;
+			end
 			Player.Character:WaitForChild("Humanoid").Health = Target2;
 		elseif Target == "all" then
 			for _, Play in pairs(game.Players:GetPlayers()) do
+				if Target2 > Play.Character:WaitForChild("Humanoid").Health then
+					Play.Character:WaitForChild("Humanoid").MaxHealth = Target2;
+				end
 				Play.Character:WaitForChild("Humanoid").Health = Target2;
 			end
 		else
 			for _, player in pairs(game.Players:GetPlayers()) do
 				if Target == player.Name:sub(1,#Target):lower() then
+					if Target2 > player.Character:WaitForChild("Humanoid").Health then
+						player.Character:WaitForChild("Humanoid").MaxHealth = Target2;
+					end
 					player.Character:WaitForChild("Humanoid").Health = Target2;
 					break
 				end
 			end
 		end
 	end,
+
+	god = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.Character:WaitForChild("Humanoid").MaxHealth = math.huge;
+			Player.Character:WaitForChild("Humanoid").Health = math.huge;
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.Character:WaitForChild("Humanoid").Max = math.huge;
+				Play.Character:WaitForChild("Humanoid").Health = math.huge;
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.Character:WaitForChild("Humanoid").MaxHealth = math.huge;
+					player.Character:WaitForChild("Humanoid").Health = math.huge;
+					break
+				end
+			end
+		end
+	end,
+
+	freeze = function(Player, Target, Target2)
+		Target2 = tonumber(Target2)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.Character.Humanoid.Anchored = true
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.Character.Humanoid.Anchored = true
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.Character.Humanoid.Anchored = true
+					break
+				end
+			end
+		end
+	end,
+	
+	unfreeze = function(Player, Target, Target2)
+		Target2 = tonumber(Target2)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.Character.HumanoidRootPart.Anchored = false
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.Character.HumanoidRootPart.Anchored = false
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.Character.HumanoidRootPart.Anchored = false
+					break
+				end
+			end
+		end
+	end,
+
+	speed = function(Player, Target, Target2)
+		Target2 = tonumber(Target2)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.Character.Humanoid.Walkspeed = tonumber(Target2)
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.Character.Humanoid.Walkspeed = tonumber(Target2)
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.Character.Humanoid.Walkspeed = tonumber(Target2)
+					break
+				end
+			end
+		end
+	end,
+	
+	jumppower = function(Player, Target, Target2)
+		Target2 = tonumber(Target2)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.Character.Humanoid.JumpPower = tonumber(Target2)
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.Character.Humanoid.JumpPower = tonumber(Target2)
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.Character.Humanoid.JumpPower = tonumber(Target2)
+					break
+				end
+			end
+		end
+	end,
+	
+	ff = function (Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			local ff = Instance.new("ForceField")
+			ff.Parent = Player.Character
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				local ff = Instance.new("ForceField")
+				ff.Parent = Play.Character
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					local ff = Instance.new("ForceField")
+					ff.Parent = player.Character					
+					break
+				end
+			end
+		end
+	end,
+
+	unff = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			pcall(function() Player.Character.ForceField:Destroy() end)
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				pcall(function() Play.Character.ForceField:Destroy() end)
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					pcall(function() player.Character.ForceField:Destroy() end)					
+					break
+				end
+			end
+		end
+	end,
+
+	sit = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.Character.Humanoid.Sit = true
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.Character.Humanoid.Sit = true
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.Character.Humanoid.Sit = true
+					break
+				end
+			end
+		end
+	end,
+
+	unsit = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.Character.Humanoid.Sit = false
+		elseif Target == "all" then
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.Character.Humanoid.Sit = false
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.Character.Humanoid.Sit = false
+					break
+				end
+			end
+		end
+	end,
+
+	char = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.CharacterAppearanceId = tonumber(Target)
+			Player:LoadCharacter()
+		elseif Target == "all" then 
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.CharacterAppearanceId = tonumber(Target)
+				Play:LoadCharacter()
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.CharacterAppearanceId = tonumber(Target)
+					player:LoadCharacter()
+					break
+				end
+			end
+		end
+	end,
+	
+	clone = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			Player.Character.Archivable = true
+			local NewCharacter = Player.Character:Clone()
+			NewCharacter.Name = Player.Name .. "_"
+			NewCharacter.Parent = workspace
+		elseif Target == "all" then 
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				Play.Character.Archivable = true
+				local NewCharacter = Play.Character:Clone()
+				NewCharacter.Name = Play.Name .. "_"
+				NewCharacter.Parent = workspace
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					player.Character.Archivable = true
+					local NewCharacter = player.Character:Clone()
+					NewCharacter.Name = player.Name .. "_"
+					NewCharacter.Parent = workspace
+					break
+				end
+			end
+		end
+	end,
+	
+	print = function(Player, Target)
+		print("From " .. Player.Name .. ": " .. Target)
+	end,
+	
+	fling = function(Player, Target)
+		if (Player.Name == Target) or (Target == "me") or (Target == nil) then
+			coroutine.wrap(function()
+				local Velocity = Instance.new("BodyVelocity")
+				Velocity.Velocity = Vector3.new(9999999,99999999,99999999)					
+				Velocity.Parent = Player.Character.HumanoidRootPart
+				Player.Character.Humanoid.Jump = true
+				wait(5)
+				Velocity:Destroy()
+			end)()
+		elseif Target == "all" then 
+			for _, Play in pairs(game.Players:GetPlayers()) do
+				coroutine.wrap(function()
+					local Velocity = Instance.new("BodyVelocity")
+					Velocity.Velocity = Vector3.new(9999999,99999999,99999999)
+					Velocity.Parent = Play.Character.HumanoidRootPart
+					Play.Character.Humanoid.Jump = true
+					wait(5)
+					Velocity:Destroy()
+				end)()
+			end
+		else
+			for _, player in pairs(game.Players:GetPlayers()) do
+				if Target == player.Name:sub(1,#Target):lower() then
+					coroutine.wrap(function()
+						local Velocity = Instance.new("BodyVelocity")
+						Velocity.Velocity = Vector3.new(9999999,99999999,99999999)					
+						Velocity.Parent = player.Character.HumanoidRootPart
+						player.Character.Humanoid.Jump = true
+						wait(5)
+						Velocity:Destroy()
+					end)()
+					break
+				end
+			end
+		end
+	end,
+	
 }
 
 return Commands
