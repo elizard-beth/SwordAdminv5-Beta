@@ -4,7 +4,7 @@ Currently, Sword Admin v5 is not yet complete.
 
 ### Unconfirmed advertisment 
 
-<img width="1000" alt="23" src="https://i.imgur.com/A3qdS9N.png">
+<img width="400" alt="23" src="https://i.imgur.com/A3qdS9N.png">
 
 ### Performance statistics:
 
