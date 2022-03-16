@@ -1,6 +1,6 @@
 # SwordAdminv5-Beta
-Unreleased and unstable versions of Sword Admin v5.
-Currently, Sword Admin v5 is not yet complete.
+Unreleased and unstable version of Sword Admin v5.
+~~Currently, Sword Admin v5 is not yet complete.~~
 This repository is discontinued.
 
 ### Unconfirmed advertisment 
