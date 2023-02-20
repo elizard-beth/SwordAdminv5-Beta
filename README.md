@@ -1,3 +1,5 @@
+## Sword Admin v6 has been released since.
+Therefore all information is outdated.
 # SwordAdminv5-Beta
 Unreleased and unstable version of Sword Admin v5.
 ~~Currently, Sword Admin v5 is not yet complete.~~
